@@ -55,11 +55,11 @@ El agente implementa un bucle clásico ReAct:
 
 | Aspecto | Decisión |
 |---|---|
-| Proveedor | OpenAI (SDK oficial) |
-| Modelo | `gpt-4o-mini` (por defecto, configurable) |
-| Razón | Equilibrio costo/calidad para tool calling. Soporta function calling nativo. Es el más económico que maneja bien herramientas estructuradas. |
-| Costo estimado | ~$0.003 USD por caso procesado (prompt ~2K tokens input + ~500 output × 3-4 iteraciones) |
-| Adaptabilidad | El adaptador usa OpenAI SDK, compatible con cualquier proveedor que implemente la misma API (Azure OpenAI, Groq, Together, etc.) |
+| Proveedor | Groq (API compatible con OpenAI SDK) |
+| Modelo | `openai/gpt-oss-120b` (configurable vía `LLM_MODEL`) |
+| Razón | Modelo gratuito con soporte robusto de function calling. La inferencia en Groq es extremadamente rápida (LPU), ideal para el ciclo ReAct con múltiples tool calls. |
+| Costo estimado | $0 USD (tier gratuito de Groq) |
+| Adaptabilidad | El adaptador usa OpenAI SDK con `baseURL` configurable, compatible con cualquier proveedor que implemente la misma API (OpenAI, Gemini, Groq, Together, etc.). Cambiar de proveedor solo requiere actualizar 3 variables en `.env`: la API key, `LLM_MODEL` y `LLM_BASE_URL`. |
 
 ## 5. Estrategia de extracción
 

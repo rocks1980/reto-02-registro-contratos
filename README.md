@@ -10,7 +10,7 @@ bun install
 
 # 2. Configurar variables de entorno
 cp .env.example .env
-# Editar .env y agregar su OPENAI_API_KEY
+# Editar .env y agregar su API key (Groq, OpenAI o Gemini)
 
 # 3. Iniciar servidor
 bun run dev
@@ -21,11 +21,15 @@ bun run dev
 
 | Variable | Requerida | Default | Descripción |
 |---|---|---|---|
-| `OPENAI_API_KEY` | Sí (para chat) | — | Clave de API de OpenAI |
-| `LLM_MODEL` | No | `gpt-4o-mini` | Modelo a utilizar |
+| `OPENAI_API_KEY` | Sí* | — | Clave de API (OpenAI o Groq) |
+| `GEMINI_API_KEY` | Sí* | — | Clave de API de Gemini (alternativa) |
+| `LLM_MODEL` | No | `openai/gpt-oss-120b` | Modelo a utilizar |
+| `LLM_BASE_URL` | No | `https://api.groq.com/openai/v1` | Base URL del proveedor |
 | `PORT` | No | `3000` | Puerto del servidor |
 | `MAX_ITERATIONS` | No | `25` | Tope de iteraciones por turno |
 | `MAX_TOKENS_PER_SESSION` | No | `100000` | Tope de tokens por sesión |
+
+*Se requiere al menos una de `OPENAI_API_KEY` o `GEMINI_API_KEY` para el modo chat con LLM.
 
 ## Ejecutar demo.ts (sin modelo)
 

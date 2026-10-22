@@ -156,7 +156,7 @@ app.use("/public/*", serveStatic({ root: "./" }));
 // ─── Inicio ─────────────────────────────────────────────────────────────────
 
 console.log(`🚀 Servidor iniciado en http://localhost:${PORT}`);
-console.log(`   Modelo: ${process.env.LLM_MODEL || "gpt-4o-mini"}`);
+console.log(`   Modelo: ${process.env.LLM_MODEL || "openai/gpt-oss-120b"}`);
 console.log(`   Proyecto: ${PROJECT_DIR}`);
 
 export default {

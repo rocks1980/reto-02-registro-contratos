@@ -48,10 +48,10 @@ export class LLMAdapter {
 
   constructor(opts?: { apiKey?: string; model?: string; maxTokensSesion?: number; baseURL?: string }) {
     const apiKey = opts?.apiKey || process.env.OPENAI_API_KEY || process.env.GEMINI_API_KEY || "";
-    this.model = opts?.model || process.env.LLM_MODEL || "gemini-2.0-flash";
+    this.model = opts?.model || process.env.LLM_MODEL || "openai/gpt-oss-120b";
     this.maxTokensSesion = opts?.maxTokensSesion || parseInt(process.env.MAX_TOKENS_PER_SESSION || "100000");
 
-    const baseURL = opts?.baseURL || process.env.LLM_BASE_URL || "https://generativelanguage.googleapis.com/v1beta/openai/";
+    const baseURL = opts?.baseURL || process.env.LLM_BASE_URL || "https://api.groq.com/openai/v1";
 
     this.client = new OpenAI({ apiKey, baseURL });
   }
