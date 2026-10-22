@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registro de Contratos — Periferia IT</title>
+  <style>
+    :root {
+      --bg: #f8f9fa;
+      --surface: #ffffff;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --text: #1e293b;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --user-bg: #dbeafe;
+      --assistant-bg: #f0fdf4;
+      --tool-bg: #fef3c7;
+      --error-bg: #fef2f2;
+      --radius: 12px;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg: #0f172a;
+        --surface: #1e293b;
+        --primary: #3b82f6;
+        --primary-hover: #60a5fa;
+        --text: #f1f5f9;
+        --text-muted: #94a3b8;
+        --border: #334155;
+        --user-bg: #1e3a5f;
+        --assistant-bg: #14532d;
+        --tool-bg: #451a03;
+        --error-bg: #450a0a;
+      }
+    }
+    :root[data-theme="dark"] {
+      --bg: #0f172a;
+      --surface: #1e293b;
+      --primary: #3b82f6;
+      --primary-hover: #60a5fa;
+      --text: #f1f5f9;
+      --text-muted: #94a3b8;
+      --border: #334155;
+      --user-bg: #1e3a5f;
+      --assistant-bg: #14532d;
+      --tool-bg: #451a03;
+      --error-bg: #450a0a;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 16px;
+      text-align: center;
+    }
+    header h1 { font-size: 1.2rem; font-weight: 600; }
+    header p { font-size: 0.8rem; color: var(--text-muted); margin-top: 4px; }
+    #chat {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .msg {
+      max-width: 85%;
+      padding: 12px 16px;
+      border-radius: var(--radius);
+      font-size: 0.9rem;
+      line-height: 1.5;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .msg.user {
+      background: var(--user-bg);
+      align-self: flex-end;
+      border-bottom-right-radius: 4px;
+    }
+    .msg.assistant {
+      background: var(--assistant-bg);
+      align-self: flex-start;
+      border-bottom-left-radius: 4px;
+    }
+    .msg.tool {
+      background: var(--tool-bg);
+      align-self: flex-start;
+      font-size: 0.8rem;
+      opacity: 0.9;
+      border-left: 3px solid #f59e0b;
+    }
+    .msg.error {
+      background: var(--error-bg);
+      align-self: flex-start;
+      border-left: 3px solid #ef4444;
+    }
+    .msg .label {
+      font-weight: 600;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 4px;
+      color: var(--text-muted);
+    }
+    .typing {
+      align-self: flex-start;
+      color: var(--text-muted);
+      font-style: italic;
+      font-size: 0.85rem;
+      padding: 8px 16px;
+    }
+    .typing::after {
+      content: "...";
+      animation: dots 1.5s steps(4, end) infinite;
+    }
+    @keyframes dots {
+      0%, 20% { content: ""; }
+      40% { content: "."; }
+      60% { content: ".."; }
+      80%, 100% { content: "..."; }
+    }
+    #input-area {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      padding: 12px 16px;
+      display: flex;
+      gap: 8px;
+    }
+    #input-area textarea {
+      flex: 1;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 0.9rem;
+      font-family: inherit;
+      background: var(--bg);
+      color: var(--text);
+      resize: none;
+      min-height: 44px;
+      max-height: 120px;
+    }
+    #input-area textarea:focus { outline: 2px solid var(--primary); border-color: transparent; }
+    #input-area button {
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 20px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    #input-area button:hover { background: var(--primary-hover); }
+    #input-area button:disabled { opacity: 0.5; cursor: not-allowed; }
+    .quick-actions {
+      padding: 8px 16px;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .quick-actions button {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 6px 14px;
+      font-size: 0.8rem;
+      color: var(--text);
+      cursor: pointer;
+    }
+    .quick-actions button:hover { border-color: var(--primary); color: var(--primary); }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>📋 Registro de Contratos Vigentes</h1>
+    <p>Agente conversacional — Periferia IT Group</p>
+  </header>
+
+  <div id="chat"></div>
+
+  <div class="quick-actions">
+    <button onclick="send('Revisa el buzón de correos')">📬 Revisar buzón</button>
+    <button onclick="send('Procesa todos los mensajes pendientes')">⚡ Procesar todos</button>
+    <button onclick="send('Genera el reporte de alertas de hoy')">🔔 Alertas</button>
+    <button onclick="send('Muestra el estado actual del maestro de contratos')">📊 Ver maestro</button>
+  </div>
+
+  <div id="input-area">
+    <textarea id="msg" placeholder="Escribe un mensaje..." rows="1"
+      onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMsg()}"></textarea>
+    <button id="send-btn" onclick="sendMsg()">Enviar</button>
+  </div>
+
+  <script>
+    const chat = document.getElementById("chat");
+    const msgInput = document.getElementById("msg");
+    const sendBtn = document.getElementById("send-btn");
+    let sessionId = crypto.randomUUID();
+    let busy = false;
+
+    function addMsg(role, text) {
+      const div = document.createElement("div");
+      div.className = "msg " + role;
+      if (role === "tool") {
+        const label = document.createElement("div");
+        label.className = "label";
+        label.textContent = "🔧 Herramienta";
+        div.appendChild(label);
+      }
+      const content = document.createElement("div");
+      content.textContent = text;
+      div.appendChild(content);
+      chat.appendChild(div);
+      chat.scrollTop = chat.scrollHeight;
+      return div;
+    }
+
+    function setTyping(on) {
+      const existing = chat.querySelector(".typing");
+      if (existing) existing.remove();
+      if (on) {
+        const div = document.createElement("div");
+        div.className = "typing";
+        div.textContent = "Procesando";
+        chat.appendChild(div);
+        chat.scrollTop = chat.scrollHeight;
+      }
+    }
+
+    function send(text) {
+      msgInput.value = text;
+      sendMsg();
+    }
+
+    async function sendMsg() {
+      const text = msgInput.value.trim();
+      if (!text || busy) return;
+
+      busy = true;
+      sendBtn.disabled = true;
+      msgInput.value = "";
+      addMsg("user", text);
+      setTyping(true);
+
+      try {
+        const res = await fetch("/api/chat/simple", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ sessionId, message: text }),
+        });
+        const data = await res.json();
+        setTyping(false);
+
+        if (!data.ok) {
+          addMsg("error", "Error: " + data.error);
+          return;
+        }
+
+        // Mostrar tool calls si las hay
+        if (data.events) {
+          for (const evt of data.events) {
+            if (evt.type === "tool_call") {
+              addMsg("tool", `${evt.data.name}(${evt.data.arguments})`);
+            }
+          }
+        }
+
+        addMsg("assistant", data.response);
+      } catch (err) {
+        setTyping(false);
+        addMsg("error", "Error de conexión: " + err.message);
+      } finally {
+        busy = false;
+        sendBtn.disabled = false;
+        msgInput.focus();
+      }
+    }
+
+    // Auto-resize textarea
+    msgInput.addEventListener("input", function() {
+      this.style.height = "auto";
+      this.style.height = Math.min(this.scrollHeight, 120) + "px";
+    });
+  </script>
+</body>
+</html>
